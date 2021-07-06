@@ -33,31 +33,22 @@ const app = express();
 
 app.use(cors());
 
+//lectura y parseo del body, otro middleware, va debajo de cors y antes de las rutas, cuidado
+//-----es la parte de body/raw/json de postman -----------//
+
+app.use(express.json());
+
 //Conexion a  base de datos, tiene que ir despues de express!!!!
 //viene de ser exportada en el config.js
 dbConnection();
 
-
-//lectura y parseo del body, otro middleware
-
-app.use(express.json());
-
-//Rutas (middleware) que vendran desde el archivo auth
+//Rutas (middleware) que vendran desde el archivo rutaUsuarios
 //el use es el middleware, usa el require para importar las rutas
-//app.use('/api/auth', require('./routes/auth'));
+app.use('/api/usuarios', require('./routes/rutaUsuarios'));
 
-//Las rutas, lo primero que haremos tras llamar al express
-
-app.get('*', (req, res) => {
+app.use('/api/login', require('./routes/rutaAuth'));
 
 
-    res.status(200).json({
-            ok: true,
-            msg: "Hola desde la primera ruta"
-        })
-        //res.sendFile(path.resolve(__dirname, 'public/index.html'));
-
-});
 
 //listen, puerto , callback
 app.listen(process.env.PORT, () => {
