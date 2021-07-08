@@ -6,56 +6,108 @@ const Usuario = require('../models/usuario');
 const bcrypt = require('bcryptjs');
 
 const { generarJWT } = require('../helpers/jwt');
+const { googleVerify } = require('../helpers/googleVerify');
 
 
 
 const login = async(req, res = response) => {
 
-    //cogemos lo que queremos
-    const { email, password } = req.body;
+        //cogemos lo que queremos
+        const { email, password } = req.body;
 
+
+
+        try {
+            // Verificar email
+            const usuarioDB = await Usuario.findOne({ email });
+
+            if (!usuarioDB) {
+                return res.status(404).json({
+                    ok: false,
+                    msg: 'Email no encontrado en login'
+                });
+            }
+
+            //verificar contraseña
+            const validPassword = bcrypt.compareSync(password, usuarioDB.password);
+
+            if (!validPassword) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Contraseña no válida'
+                });
+            }
+
+            // Generar el JWT
+            const token = await generarJWT(usuarioDB.id);
+
+            res.json({
+                ok: true,
+                msg: 'todo correcto en mail/pass',
+                token
+            })
+
+
+        } catch (error) {
+
+            res.status(500).json({
+                ok: false,
+                msg: 'Fallo en el authcontroller'
+            })
+        }
+
+
+    }
+    //CUIDADO QUE A VECES TARDA UN HUEVO
+const googleSignIn = async(req, res = response) => {
+
+    const googleToken = req.body.token;
 
 
     try {
-        // Verificar email
+
+        const { name, email, picture } = await googleVerify(googleToken);
+        //verificar si existe en bbdd
+        let usuario;
+
         const usuarioDB = await Usuario.findOne({ email });
-
+        //Si no existe
         if (!usuarioDB) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'Email no encontrado en login'
-            });
+            usuario = new Usuario({
+                nombre: name,
+                email,
+                password: '@@',
+                img: picture,
+                google: true
+            })
+        } else {
+
+            //si existe usuario
+            usuario = usuarioDB;
+            usuario.google = true;
+            //usuario.password = '@@@';
         }
 
-        //verificar contraseña
-        const validPassword = bcrypt.compareSync(password, usuarioDB.password);
-
-        if (!validPassword) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Contraseña no válida'
-            });
-        }
+        //guardar en bd
+        await usuario.save();
 
         // Generar el JWT
         const token = await generarJWT(usuarioDB.id);
 
         res.json({
             ok: true,
-            msg: 'todo correcto en mail/pass',
             token
         })
 
-
-    } catch (error) {
-
-        res.status(500).json({
+    } catch (err) {
+        res.json({
             ok: false,
-            msg: 'Fallo en el authcontroller'
+            msg: ' Token no es correcto'
         })
     }
 
 
+
 }
 
-module.exports = { login };
+module.exports = { login, googleSignIn };

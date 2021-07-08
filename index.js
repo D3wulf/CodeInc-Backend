@@ -42,6 +42,13 @@ app.use(express.json());
 //viene de ser exportada en el config.js
 dbConnection();
 
+//Directorio público
+//Manejar el resto de rutas ( por meter angular )
+
+app.use(express.static('public'));
+
+
+
 //Rutas (middleware) que vendran desde el archivo rutaUsuarios/rutaAuth
 //el use es el middleware, usa el require para importar las rutas
 app.use('/api/usuarios', require('./routes/rutaUsuarios'));
