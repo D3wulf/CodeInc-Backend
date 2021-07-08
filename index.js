@@ -42,12 +42,14 @@ app.use(express.json());
 //viene de ser exportada en el config.js
 dbConnection();
 
-//Rutas (middleware) que vendran desde el archivo rutaUsuarios
+//Rutas (middleware) que vendran desde el archivo rutaUsuarios/rutaAuth
 //el use es el middleware, usa el require para importar las rutas
 app.use('/api/usuarios', require('./routes/rutaUsuarios'));
-
 app.use('/api/login', require('./routes/rutaAuth'));
-
+app.use('/api/empresas', require('./routes/rutaEmpresas'));
+app.use('/api/trabajadores', require('./routes/rutaTrabajador'));
+app.use('/api/todo', require('./routes/rutaBusquedas'));
+app.use('/api/upload', require('./routes/rutaUploads'));
 
 
 //listen, puerto , callback

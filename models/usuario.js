@@ -18,18 +18,12 @@ const UsuarioSchema = Schema({
 
     },
     password: {
-
         type: String,
         required: true,
-
-
-
     },
     img: {
 
         type: String,
-
-
     },
     role: {
 
@@ -46,11 +40,6 @@ const UsuarioSchema = Schema({
 
 
     },
-
-
-
-
-
 
 
 });

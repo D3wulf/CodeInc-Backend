@@ -69,16 +69,43 @@ const crearUsuario = async(req, res) => {
 
 const getUsuarios = async(req, res) => {
 
+    //PAGINACION, si no manda valor, será 0
+    const desde = Number(req.query.desde) || 0;
+
+    //--------------------------ESTE CODIGO ES PERFECTAMENTE VALIDO-----------------//
+    //--------------------------PERO USAMOS EL PROMISE ALL-----------------//
+
     //esto cogerá de la base de datos lo que hay, es como un select, entre llaves hacemos un filtro, similar al where
     //esto seria select nombre,email, google, role from usuarios
 
-    const usuarios = await Usuario.find({}, 'nombre email google role')
+    // const usuarios = await Usuario
+    //     .find({}, 'nombre email google role')
+    //     //saltamos desde el numero que pongamos en la url
+    //     .skip(desde)
+    //     .limit(5)
 
+    // el select count, o sea, ver el total de registros
+    // const totalRegistros = await Usuario.count();
+
+    //--------------------------FIN CODIGO VALIDO-----------------//
+
+
+    // AQUI CREA UN ARRAY DE PROMESAS CON EL PROMISE ALL, ES UNA MEJORA AL CODIGO DE ARRIBA,
+    // LO UNICO QUE HACE ES QUE LA CARGA SEA MAS RAPIDA
+    const [usuarios, totalRegistros] = await Promise.all([
+        Usuario
+        .find({}, 'nombre email google role img')
+        .skip(desde)
+        .limit(5),
+        Usuario.count()
+
+    ])
 
     res.status(200).json({
             ok: true,
             msg: "Get Usuarios",
             usuarios,
+            totalRegistros,
             //Esto viene de validar-Jwt y es para saber el id del que hizo la peticion
             uid: req.uid
         })
