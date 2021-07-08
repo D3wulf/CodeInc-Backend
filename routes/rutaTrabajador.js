@@ -28,9 +28,13 @@ router.post('/', [
 
 
 //actualizar usuarios
-router.put('/:id', [], updateTrabajador);
+router.put('/:id', [validarJWT,
+    check('nombre', "El campo nombre no puede estar vacío").not().isEmpty(),
+    check('empresa', 'El nombre de la empresa es obligatorio').not().isEmpty(),
+    validarCampos
+], updateTrabajador);
 
-router.delete('/:id', borrarTrabajador);
+router.delete('/:id', validarJWT, borrarTrabajador);
 
 
 

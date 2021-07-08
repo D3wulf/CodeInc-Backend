@@ -57,21 +57,88 @@ const crearTrabajador = async(req, res = response) => {
 
 }
 
-const updateTrabajador = (req, res = response) => {
+const updateTrabajador = async(req, res = response) => {
 
 
-    res.json({
-        ok: true,
-        msg: 'updatecurrante, hola!'
-    })
+    //Sacamos la id de la url
+    const id = req.params.id;
+    //cogemos la uid del que hizo la peticion para mostrarlo
+    const uid = req.uid;
+
+    console.log(id);
+    console.log(uid);
+    try {
+
+        const trabajadorDB = await Trabajador.findById(id);
+
+        if (!trabajadorDB) {
+
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe trabajador con ese ID (actualizarTrabajador)'
+            })
+        }
+        //HA PASADO EL CORTE DE QUE EL USUARIO EXISTE
+        // Ahora, en campos grabamos los nuevos datos a actualizar
+        //y quitamos lo que no queremos que se lea
+        const cambiosTrabajador = {...req.body, usuario: uid };
+        //mete en una constante lo que mandamos como id, los campos del body y que nos devuelva lo nuevo
+        const trabajadorActualizado = await Trabajador.findByIdAndUpdate(id, cambiosTrabajador, { new: true });
+
+
+
+
+        res.json({
+            ok: true,
+            msg: "Trabajador actualizado",
+            currante: trabajadorActualizado
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+
+            msg: 'Error en actualizarTrabajador/try-catch'
+        });
+
+    }
 }
-const borrarTrabajador = (req, res = response) => {
+const borrarTrabajador = async(req, res = response) => {
+
+    const uid = req.params.id;
+
+    try {
+
+        const trabajadorDB = await Trabajador.findById(uid);
+
+        if (!trabajadorDB) {
+
+            return res.status(404).json({
+                ok: false,
+                msg: ' No existe el trabajador con ese ID'
+            })
+        }
+
+        //mete en una constante lo que mandamos como id, los campos del body y que nos devuelva lo nuevo
+        await Trabajador.findByIdAndDelete(uid);
+
+        res.json({
+            ok: true,
+            msg: 'despidos, hola!',
+            uid
+        })
 
 
-    res.json({
-        ok: true,
-        msg: 'despidos, hola!'
-    })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+
+            msg: 'Error en borrarTrabajador/trycatch'
+        });
+
+    }
+
 }
 
 

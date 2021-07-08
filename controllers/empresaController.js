@@ -49,21 +49,87 @@ const crearEmpresa = async(req, res = response) => {
 
 }
 
-const updateEmpresa = (req, res = response) => {
+const updateEmpresa = async(req, res = response) => {
+    //Sacamos la id de la url
+    const id = req.params.id;
+    //cogemos la uid del que hizo la peticion para mostrarlo
+    const uid = req.uid;
 
 
-    res.json({
-        ok: true,
-        msg: 'updateEmpresa, hola!'
-    })
+    try {
+
+        const empresa = await Empresa.findById(id);
+
+        if (!empresa) {
+
+            res.status(500).json({
+                ok: false,
+                msg: 'Empresa no encontrada',
+            });
+
+        }
+
+        const cambiosEmpresa = {
+                ...req.body,
+                usuario: uid
+            }
+            // el update
+        const empresaActualizada = await Empresa.findByIdAndUpdate(id, cambiosEmpresa, { new: true });
+
+
+        res.json({
+            ok: true,
+            msg: 'Nombre de empresa actualizada',
+            nuevoNombre: empresaActualizada
+        });
+
+
+    } catch (error) {
+
+        res.status(500).json({
+            ok: false,
+            msg: 'Fallo al actualizar empresa',
+        });
+
+    }
+
+
 }
-const borrarEmpresa = (req, res = response) => {
+const borrarEmpresa = async(req, res = response) => {
+
+    const uid = req.params.id;
+
+    try {
+
+        const empresaDB = await Empresa.findById(uid);
+
+        if (!empresaDB) {
+
+            return res.status(404).json({
+                ok: false,
+                msg: ' No existe la empresa con ese ID'
+            })
+        }
+
+        //mete en una constante lo que mandamos como id, los campos del body y que nos devuelva lo nuevo
+        await Empresa.findByIdAndDelete(uid);
+
+        res.json({
+            ok: true,
+            msg: 'Empresa borrada!',
+            uid
+        })
 
 
-    res.json({
-        ok: true,
-        msg: 'borrarEmpresa, hola!'
-    })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+
+            msg: 'Error en borrarUsuario/trycatch'
+        });
+
+    }
+
 }
 
 

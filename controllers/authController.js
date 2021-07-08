@@ -92,7 +92,7 @@ const googleSignIn = async(req, res = response) => {
         await usuario.save();
 
         // Generar el JWT
-        const token = await generarJWT(usuarioDB.id);
+        const token = await generarJWT(usuario.id);
 
         res.json({
             ok: true,
@@ -102,7 +102,7 @@ const googleSignIn = async(req, res = response) => {
     } catch (err) {
         res.json({
             ok: false,
-            msg: ' Token no es correcto'
+            msg: 'Token no es correcto'
         })
     }
 
@@ -110,4 +110,20 @@ const googleSignIn = async(req, res = response) => {
 
 }
 
-module.exports = { login, googleSignIn };
+const renewToken = async(req, res = response) => {
+
+
+
+    const uid = req.uid;
+
+    // Generar el JWT
+    const token = await generarJWT(uid);
+
+    res.json({
+        ok: true,
+        msg: 'Token renovado',
+        token
+    })
+}
+
+module.exports = { login, googleSignIn, renewToken };
