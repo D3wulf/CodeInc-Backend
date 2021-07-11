@@ -149,8 +149,16 @@ const actualizaUsuarios = async(req, res) => {
                 })
             }
         }
+        if (!usuarioDB.google) {
 
-        campos.email = email;
+            campos.email = email;
+        } else if (usuarioDB.email !== email) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuarios de Google no pueden actualizar su correo'
+            })
+        }
+
 
 
         //mete en una constante lo que mandamos como id, los campos del body y que nos devuelva lo nuevo

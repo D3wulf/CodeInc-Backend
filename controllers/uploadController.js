@@ -80,7 +80,9 @@ const fileUpload = (req, res = response) => {
 
         res.json({
             ok: true,
-            msg: 'Eres un maquinon, has subido el archivo con éxito'
+            msg: 'Eres un maquinon, has subido el archivo con éxito',
+            img: file.name
+
         });
     });
 

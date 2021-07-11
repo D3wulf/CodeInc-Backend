@@ -5,14 +5,13 @@
 
 const { Router } = require('express');
 const expressFileUpload = require('express-fileupload');
-const { check } = require('express-validator');
 
 //---------------CREAMOS EL CONTROLADOR PARA LIMPIEZA DE CODIGO-----------------------//
 const { getTodo, getDocumentosColeccion } = require('../controllers/busquedaController');
 const { fileUpload, miImagen } = require('../controllers/uploadController');
 
 //---------------- VALIDACION DE CAMPOS- MIDDLEWARE ------------//
-const { validarCampos } = require('../middlewares/validar-campos');
+
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 const router = Router();
@@ -22,8 +21,8 @@ router.use(expressFileUpload());
 // Ruta : api/usuarios
 
 router.put('/:tipo/:id', validarJWT, fileUpload);
-
-router.get('/:tipo/:foto', validarJWT, miImagen);
+//HE TENIDO QUE QUITAR EL VALIDAR 
+router.get('/:tipo/:foto', miImagen);
 
 
 module.exports = router;
