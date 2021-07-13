@@ -5,7 +5,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 
 //---------------CREAMOS EL CONTROLADOR PARA LIMPIEZA DE CODIGO-----------------------//
-const { getTrabajador, crearTrabajador, updateTrabajador, borrarTrabajador } = require('../controllers/trabajadorController');
+const { getTrabajador, crearTrabajador, updateTrabajador, borrarTrabajador, getTrabajadorId } = require('../controllers/trabajadorController');
 
 //---------------- VALIDACION DE CAMPOS- MIDDLEWARE ------------//
 const { validarCampos } = require('../middlewares/validar-campos');
@@ -34,7 +34,11 @@ router.put('/:id', [validarJWT,
     validarCampos
 ], updateTrabajador);
 
+
+
 router.delete('/:id', validarJWT, borrarTrabajador);
+
+router.get('/:id', validarJWT, getTrabajadorId);
 
 
 

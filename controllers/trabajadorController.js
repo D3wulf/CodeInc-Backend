@@ -141,6 +141,35 @@ const borrarTrabajador = async(req, res = response) => {
 
 }
 
+const getTrabajadorId = async(req, res = response) => {
+
+    //id url
+    const id = req.params.id;
+
+    try {
+
+        //select y el populate es para coger datos de otros modelos
+        const trabajador = await Trabajador.findById(id)
+            .populate('usuario', 'nombre img')
+            .populate('empresa', 'nombre img')
+
+        res.json({
+            ok: true,
+            trabajador
+        })
+
+    } catch (error) {
+
+        console.log(error);
+        res.status(500).json({
+
+            msg: 'Error en trabajador id'
+        });
+
+    }
+
+}
 
 
-module.exports = { getTrabajador, crearTrabajador, updateTrabajador, borrarTrabajador };
+
+module.exports = { getTrabajador, crearTrabajador, updateTrabajador, borrarTrabajador, getTrabajadorId };

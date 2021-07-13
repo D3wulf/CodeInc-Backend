@@ -8,7 +8,8 @@ const getEmpresas = async(req, res = response) => {
 
     res.json({
         ok: true,
-        empresas
+        empresas,
+        img: empresas.img
     })
 }
 

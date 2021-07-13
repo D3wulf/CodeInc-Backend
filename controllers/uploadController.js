@@ -38,11 +38,11 @@ const fileUpload = (req, res = response) => {
     const file = req.files.imagen;
     //dividimos el nombre de la imagen en un array, necesitamos coger la extension
     const nombreCortado = file.name.split('.');
-    console.log(nombreCortado);
+    //console.log(nombreCortado);
     //un array en -1 es coger la ultima posicion del mismo, en este caso
     //cogeriamos la extension solo
     const extensionArchivo = nombreCortado[nombreCortado.length - 1];
-    console.log(extensionArchivo);
+    //console.log(extensionArchivo);
 
     //Validamos extensión
     const extensionesValidas = ['png', 'jpg', 'jpeg', 'gif'];
