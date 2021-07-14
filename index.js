@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 
 //para arreglar angular en node, el tema de las recargas de pagina
-//const path = require('path');
+const path = require('path');
 
 //Base de datos creado archivo de configuracion database/config
 
@@ -58,6 +58,9 @@ app.use('/api/trabajadores', require('./routes/rutaTrabajador'));
 app.use('/api/todo', require('./routes/rutaBusquedas'));
 app.use('/api/upload', require('./routes/rutaUploads'));
 
+//Errores de recarga
+app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, 'public/index.html')));
 
 //listen, puerto , callback
 app.listen(process.env.PORT, () => {
