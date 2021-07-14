@@ -8,7 +8,7 @@ const { getUsuarios, crearUsuario, actualizaUsuarios, borrarUsuario } = require(
 
 //---------------- VALIDACION DE CAMPOS- MIDDLEWARE ------------//
 const { validarCampos } = require('../middlewares/validar-campos');
-const { validarJWT } = require('../middlewares/validar-jwt');
+const { validarJWT, validarAdmin,validarAdmin_o_mismoUser } = require('../middlewares/validar-jwt');
 // const { validarJWT } = require('../middlewares/validar-jwt');
 
 const router = Router();
@@ -30,7 +30,7 @@ router.post('/', [
 
 
 //actualizar usuarios
-router.put('/:id', validarJWT, [
+router.put('/:id', validarJWT, validarAdmin_o_mismoUser, [
     check('nombre', "El campo nombre no puede estar vacío").not().isEmpty(),
     check('email', 'El mail es obligatorio').isEmail(),
     //check('role', "El rol es obligatorio").not().isEmpty(),
@@ -38,7 +38,7 @@ router.put('/:id', validarJWT, [
     validarCampos
 ], actualizaUsuarios);
 
-router.delete('/:id', validarJWT, borrarUsuario);
+router.delete('/:id', validarJWT, validarAdmin, borrarUsuario);
 
 
 

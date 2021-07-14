@@ -1,6 +1,9 @@
 const { response } = require("express");
 
+const Usuario = require('../models/usuario');
+
 const jwt = require('jsonwebtoken');
+const usuario = require("../models/usuario");
 
 const validarJWT = (req, res = response, next) => {
 
@@ -37,6 +40,94 @@ const validarJWT = (req, res = response, next) => {
     next();
 }
 
+const validarAdmin = async(req, res, next) => {
+
+    const uid = req.uid;
+
+    try {
+
+        const usuarioDB = await Usuario.findById(uid);
+
+        if (!usuarioDB) {
+            return res.status(404).json({
+
+                ok: false,
+                msg: 'No existe usuario en bbdd en validarJWT'
+            })
+        }
+
+        if (usuarioDB.role !== 'ADMIN_ROLE') {
+
+            return res.status(403).json({
+
+                ok: false,
+                msg: 'No es Administrador'
+            })
+        }
+
+        // si todo va ok
+        next();
+
+    } catch (error) {
+        res.status(500).json({
+
+            ok: false,
+            msg: 'Error en la verificacion del admin en validarJWT'
+        })
+
+    }
+
+}
+
+const validarAdmin_o_mismoUser = async(req, res, next) => {
+
+    const uid = req.uid;
+    
+    const id = req.params.id;
+
+
+    try {
+
+        const usuarioDB = await Usuario.findById(uid);
+
+        if (!usuarioDB) {
+            return res.status(404).json({
+
+                ok: false,
+                msg: 'No existe usuario en bbdd en validarJWT'
+            })
+        }
+
+        if (usuarioDB.role === 'ADMIN_ROLE' || uid===id) {
+
+
+            // si todo va ok
+            next();
+            
+        }else{
+
+            return res.status(403).json({
+
+                ok: false,
+                msg: 'No es Administrador'
+            })
+
+        }
+
+        
+
+    } catch (error) {
+        res.status(500).json({
+
+            ok: false,
+            msg: 'Error en la verificacion del admin en validarJWT'
+        })
+
+    }
+
+}
+
 module.exports = {
-    validarJWT
+    validarJWT,
+    validarAdmin,validarAdmin_o_mismoUser
 }
